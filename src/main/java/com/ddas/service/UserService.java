@@ -1,12 +1,9 @@
 package com.ddas.service;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
 
-import com.ddas.model.User;
+import com.ddas.model.domain.User;
+import com.ddas.model.security.UserNotFoundException;
 import com.ddas.repository.UserRepository;
 
 @Service
@@ -17,16 +14,26 @@ public class UserService
         this.userRepository = userRepository;
     }
 
-    public List<User> findAll()
+    public void save(User user)
     {
-        return Streamable.of(userRepository.findAll()).toList();
+        userRepository.save(user);
     }
 
-    public User findUserById(Long id)
+    public User findById(Long id)
     {
-        Optional<User> user = userRepository.findById(id);
+        return userRepository.findById(id)
+        .orElseThrow(() -> new UserNotFoundException("User with id: " + id + " not found!"));
+    }
 
-        return user.get();
+    public User findByEmail(String email)
+    {
+        return userRepository.findByEmail(email)
+        .orElseThrow(() -> new UserNotFoundException("User with email: " + email + " not found!"));
+    }
+
+    public void deleteUser(User user)
+    {
+        userRepository.delete(user);
     }
 
     private final UserRepository userRepository;    
