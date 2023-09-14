@@ -1,3 +1,3 @@
 package com.ddas.model.exception;
 
-public record ApiError(String message, String cause, int statusCode, String timestamp) { }
+public record ApiError(String message, int statusCode, String timestamp, String path, String cause) { }
