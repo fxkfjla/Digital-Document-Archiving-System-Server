@@ -1,4 +1,4 @@
-package com.ddas.model.security;
+package com.ddas.model.exception;
 
 public class UserNotFoundException extends RuntimeException
 {

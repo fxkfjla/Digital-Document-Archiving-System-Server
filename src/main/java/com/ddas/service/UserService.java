@@ -3,7 +3,7 @@ package com.ddas.service;
 import org.springframework.stereotype.Service;
 
 import com.ddas.model.domain.User;
-import com.ddas.model.security.UserNotFoundException;
+import com.ddas.model.exception.UserNotFoundException;
 import com.ddas.repository.UserRepository;
 
 @Service
