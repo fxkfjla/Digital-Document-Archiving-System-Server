@@ -25,24 +25,13 @@ public class User implements UserDetails
     {
         this.email = email;
         this.password = password;
+        this.role = role;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities()
     {
         return List.of(new SimpleGrantedAuthority(role.name()));
-    }
-
-    @Override 
-    public String getPassword() 
-    { 
-        return password; 
-    }
-
-    @Override 
-    public String getUsername() 
-    { 
-        return email; 
     }
 
     @Override
@@ -71,7 +60,8 @@ public class User implements UserDetails
 
     // Getters, setters
     public Long getId() { return id; }
-    public String getEmail() { return email; }
+    @Override public String getUsername() { return email; }
+    @Override public String getPassword() { return password; }
     public UserRole getRole() { return role; }
     public void setId(Long id) { this.id = id; }
     public void setEmail(String email) { this.email = email; }
