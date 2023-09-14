@@ -1,5 +1,7 @@
 package com.ddas.service;
 
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import com.ddas.model.domain.User;
@@ -7,7 +9,7 @@ import com.ddas.model.exception.UserNotFoundException;
 import com.ddas.repository.UserRepository;
 
 @Service
-public class UserService
+public class UserService implements UserDetailsService
 {
     public UserService(UserRepository userRepository)
     {
@@ -36,5 +38,11 @@ public class UserService
         userRepository.delete(user);
     }
 
-    private final UserRepository userRepository;    
+    @Override
+    public UserDetails loadUserByUsername(String username)
+    {
+        return findByEmail(username);
+    }
+
+    private final UserRepository userRepository;
 }
