@@ -21,6 +21,8 @@ public class User implements UserDetails
 {
     // TODO: Implement account locking etc. mechanisms 
 
+    public User() { }
+
     public User(String email, String password, UserRole role)
     {
         this.email = email;
