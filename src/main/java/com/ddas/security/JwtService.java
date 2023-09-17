@@ -10,7 +10,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtParserBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -64,9 +63,11 @@ public class JwtService
 
     private Claims extractAllClaims(String token)
     {
-        JwtParserBuilder parserBuilder = Jwts.parserBuilder().setSigningKey(getSigningKey());
-                    
-        return parserBuilder.build().parseClaimsJwt(token).getBody();
+        return Jwts.parserBuilder()
+        .setSigningKey(getSigningKey())
+        .build()
+        .parseClaimsJws(token)
+        .getBody();
     }
 
     private Key getSigningKey()
@@ -76,5 +77,5 @@ public class JwtService
     }
 
     // Possibly move to application.properties
-    private final String SECRET_KEY = "c6da19c37593e4dd9d10ac2816dcdf323efb7c79765c06b98961abd8339bff98";
+    private final String SECRET_KEY = "4c63e2fd3a1fbc442a2a6646e1c2df6e52449e4c464ea7f7e3e2a6e8e471b289";
 }
