@@ -13,9 +13,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.ddas.service.UserService;
 
 @Configuration
-public class ApplicationConfig 
+public class WebSecurityBeans 
 {
-    public ApplicationConfig(UserService userService)
+    public WebSecurityBeans(UserService userService)
     {
         this.userService = userService;
     }

@@ -1,4 +1,4 @@
-package com.ddas.security;
+package com.ddas.jwt;
 
 public class JwtConstants
 {

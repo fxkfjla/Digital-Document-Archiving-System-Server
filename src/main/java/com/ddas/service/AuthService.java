@@ -9,7 +9,6 @@ import com.ddas.model.domain.User;
 import com.ddas.model.domain.UserRole;
 import com.ddas.model.dto.UserLoginDTO;
 import com.ddas.model.dto.UserRegistrationDTO;
-import com.ddas.security.JwtService;
 
 @Service
 public class AuthService
