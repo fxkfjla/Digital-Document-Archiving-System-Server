@@ -7,7 +7,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
-import com.ddas.exception.model.ApiResponseUtils;
+import com.ddas.exception.model.ApiError;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.ServletException;
@@ -21,10 +21,13 @@ public class WebSecurityAuthEntryPoint implements AuthenticationEntryPoint
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) 
     throws IOException, ServletException
     {
-        var apiError = ApiResponseUtils.buildError("User not found!", authException, HttpStatus.UNAUTHORIZED, request);
+        int statusCode = HttpStatus.UNAUTHORIZED.value();
+
+        var apiError = new ApiError<>(statusCode, request.getRequestURI(), null, authException.getMessage());
 
         var objMapper = new ObjectMapper();
+
         response.getWriter().write(objMapper.writeValueAsString(apiError));
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setStatus(statusCode);
     }
 }
