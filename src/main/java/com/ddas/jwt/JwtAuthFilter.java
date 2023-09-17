@@ -2,6 +2,7 @@ package com.ddas.jwt;
 
 import java.io.IOException;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,8 +11,11 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.ddas.exception.model.ApiError;
 import com.ddas.service.JwtService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,24 +42,41 @@ public class JwtAuthFilter extends OncePerRequestFilter
             return;
         }
 
-        final String token = authHeader.substring(JwtConstants.BEARER_END_INDEX); 
-        final String username = jwtService.extractUsername(token);
-
-        if(username != null && SecurityContextHolder.getContext().getAuthentication() == null)
+        try
         {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            final String token = authHeader.substring(JwtConstants.BEARER_END_INDEX); 
+            final String username = jwtService.extractUsername(token);
 
-            if(jwtService.tokenIsValid(token, userDetails))
+            if(username != null && SecurityContextHolder.getContext().getAuthentication() == null)
             {
-                UsernamePasswordAuthenticationToken authToken = 
-                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                if(jwtService.tokenIsValid(token, userDetails))
+                {
+                    UsernamePasswordAuthenticationToken authToken = 
+                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
             }
         }
+        catch(ExpiredJwtException e)
+        {
+            // TODO: find a clever way to reduce code repetition (entrypoint)
+            int statusCode = HttpStatus.UNAUTHORIZED.value();
 
-        filterChain.doFilter(request, response);
+            var apiError = new ApiError<>(statusCode, request.getRequestURI(), null, e.getMessage());
+
+            var objMapper = new ObjectMapper();
+
+            response.getWriter().write(objMapper.writeValueAsString(apiError));
+            response.setStatus(statusCode);
+        }
+        finally
+        {
+            filterChain.doFilter(request, response);
+        }
     }
 
     private final JwtService jwtService;
