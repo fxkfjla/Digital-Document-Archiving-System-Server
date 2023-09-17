@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ddas.exception.model.ApiResponse;
+import com.ddas.exception.model.ApiResponseUtils;
 import com.ddas.model.domain.User;
 import com.ddas.service.UserService;
 
@@ -19,22 +21,22 @@ public class UserController
     }
 
     @PostMapping("/save")
-    public ResponseEntity<String> save(User user)
+    public ResponseEntity<ApiResponse<String>> save(User user)
     {
         userService.save(user);
-        return ResponseEntity.ok("User saved!");
+        return ApiResponseUtils.buildSuccess("User saved!");
     }
 
     @GetMapping("/find-by-id")
-    public ResponseEntity<User> findById(Long id)
+    public ResponseEntity<ApiResponse<User>> findById(Long id)
     {
-        return ResponseEntity.ok(userService.findById(id));
+        return ApiResponseUtils.buildSuccess(userService.findById(id));
     }
 
     @GetMapping("/find-by-email")
-    public ResponseEntity<User> findByEmail(String email)
+    public ResponseEntity<ApiResponse<User>> findByEmail(String email)
     {
-        return ResponseEntity.ok(userService.findByEmail(email));
+        return ApiResponseUtils.buildSuccess(userService.findByEmail(email));
     }
 
     private final UserService userService; 

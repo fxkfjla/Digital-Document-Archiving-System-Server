@@ -5,9 +5,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import com.ddas.model.exception.ApiError;
-import com.ddas.model.exception.ApiErrorUtils;
-import com.ddas.model.exception.UserNotFoundException;
+import com.ddas.exception.model.ApiResponse;
+import com.ddas.exception.model.ApiResponseUtils;
+import com.ddas.exception.model.UserNotFoundException;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -15,8 +15,8 @@ import jakarta.servlet.http.HttpServletRequest;
 public class UserExceptionHandler
 {
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ApiError> handleUserNotFoundException(UserNotFoundException e, HttpServletRequest req)
+    public ResponseEntity<ApiResponse<String>> handleUserNotFoundException(UserNotFoundException e, HttpServletRequest req)
     {
-        return ApiErrorUtils.buildErrorResponse(e, HttpStatus.NOT_FOUND, req);
+        return ApiResponseUtils.buildError("User not found!", e, HttpStatus.NOT_FOUND, req);
     }
 }

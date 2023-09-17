@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import com.ddas.model.domain.User;
 import com.ddas.model.domain.UserRole;
-import com.ddas.model.dto.AuthResponse;
 import com.ddas.model.dto.UserLoginDTO;
 import com.ddas.model.dto.UserRegistrationDTO;
 import com.ddas.security.JwtService;
@@ -23,22 +22,22 @@ public class AuthService
         this.authManager = authManager;
     }
 
-    public AuthResponse register(UserRegistrationDTO userDTO)
+    public String register(UserRegistrationDTO userDTO)
     {
         User user = new User(userDTO.email(), passwordEncoder.encode(userDTO.password()), UserRole.USER);
         userService.save(user);
 
-        return new AuthResponse(jwtService.generateToken(user));
+        return jwtService.generateToken(user);
     }
 
-    public AuthResponse login(UserLoginDTO userDTO)
+    public String login(UserLoginDTO userDTO)
     {
         //TODO: handle authentication exception?
         authManager.authenticate(new UsernamePasswordAuthenticationToken(userDTO.email(), userDTO.password()));
 
         User user = userService.findByEmail(userDTO.email());
 
-        return new AuthResponse(jwtService.generateToken(user));
+        return jwtService.generateToken(user);
     }
 
     private final UserService userService; 

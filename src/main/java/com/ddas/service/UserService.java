@@ -2,7 +2,7 @@ package com.ddas.service;
 
 import org.springframework.stereotype.Service;
 
-import com.ddas.model.exception.UserNotFoundException;
+import com.ddas.exception.model.UserNotFoundException;
 import com.ddas.model.domain.User;
 import com.ddas.repository.UserRepository;
 

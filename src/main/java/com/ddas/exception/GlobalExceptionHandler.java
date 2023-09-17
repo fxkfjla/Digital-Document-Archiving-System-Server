@@ -6,8 +6,8 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import com.ddas.model.exception.ApiError;
-import com.ddas.model.exception.ApiErrorUtils;
+import com.ddas.exception.model.ApiResponse;
+import com.ddas.exception.model.ApiResponseUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -15,8 +15,8 @@ import jakarta.servlet.http.HttpServletRequest;
 public class GlobalExceptionHandler
 {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<ApiError> handleMethodNotAllowedException(HttpRequestMethodNotSupportedException e, HttpServletRequest req)
+    public ResponseEntity<ApiResponse<String>> handleMethodNotAllowedException(HttpRequestMethodNotSupportedException e, HttpServletRequest req)
     {
-        return ApiErrorUtils.buildErrorResponse(e, HttpStatus.METHOD_NOT_ALLOWED, req);
+        return ApiResponseUtils.buildError("Method not allowed!", e, HttpStatus.METHOD_NOT_ALLOWED, req);
     }
 }
