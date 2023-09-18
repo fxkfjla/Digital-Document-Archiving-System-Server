@@ -12,14 +12,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.ddas.service.UserService;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 @Configuration
 public class WebSecurityBeans 
 {
-    public WebSecurityBeans(UserService userService)
-    {
-        this.userService = userService;
-    }
-
     @Bean
     public AuthenticationProvider authenticationProvider()
     {

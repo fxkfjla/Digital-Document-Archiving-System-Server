@@ -13,17 +13,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.ddas.jwt.JwtAuthFilter;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig
 {
-    public WebSecurityConfig(AuthenticationProvider authProvider, JwtAuthFilter jwtAuthFilter, AuthenticationEntryPoint entryPoint)
-    {
-        this.authProvider = authProvider;
-        this.jwtAuthFilter = jwtAuthFilter;
-        this.entryPoint = entryPoint;
-    }
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception
     {

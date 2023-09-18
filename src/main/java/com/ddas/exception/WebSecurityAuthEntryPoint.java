@@ -7,7 +7,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
-import com.ddas.exception.model.ApiError;
+import com.ddas.exception.model.ApiResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.ServletException;
@@ -21,13 +21,13 @@ public class WebSecurityAuthEntryPoint implements AuthenticationEntryPoint
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) 
     throws IOException, ServletException
     {
-        int statusCode = HttpStatus.UNAUTHORIZED.value();
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
 
-        var apiError = new ApiError<>(statusCode, request.getRequestURI(), null, authException.getMessage());
+        var apiError = ApiResponse.error(authException, status, request);
 
         var objMapper = new ObjectMapper();
 
         response.getWriter().write(objMapper.writeValueAsString(apiError));
-        response.setStatus(statusCode);
+        response.setStatus(status.value());
     }
 }

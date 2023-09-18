@@ -11,7 +11,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.ddas.exception.model.ApiError;
+import com.ddas.exception.model.ApiResponse;
 import com.ddas.service.JwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -20,16 +20,12 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter
 {
-    public JwtAuthFilter(JwtService jwtService, UserDetailsService userDetailsService)
-    {
-        this.jwtService = jwtService;
-        this.userDetailsService = userDetailsService;
-    }
-    
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) 
     throws ServletException, IOException
@@ -64,14 +60,14 @@ public class JwtAuthFilter extends OncePerRequestFilter
         catch(ExpiredJwtException e)
         {
             // TODO: find a clever way to reduce code repetition (entrypoint)
-            int statusCode = HttpStatus.UNAUTHORIZED.value();
+            HttpStatus status = HttpStatus.UNAUTHORIZED;
 
-            var apiError = new ApiError<>(statusCode, request.getRequestURI(), null, e.getMessage());
+            var apiError = ApiResponse.error(e, status, request);
 
             var objMapper = new ObjectMapper();
 
             response.getWriter().write(objMapper.writeValueAsString(apiError));
-            response.setStatus(statusCode);
+            response.setStatus(status.value());
         }
         finally
         {

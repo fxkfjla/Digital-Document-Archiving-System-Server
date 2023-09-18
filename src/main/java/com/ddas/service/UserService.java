@@ -6,14 +6,12 @@ import com.ddas.exception.model.UserNotFoundException;
 import com.ddas.model.domain.User;
 import com.ddas.repository.UserRepository;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 @Service
 public class UserService
 {
-    public UserService(UserRepository userRepository)
-    {
-        this.userRepository = userRepository;
-    }
-
     public void save(User user)
     {
         userRepository.save(user);

@@ -7,21 +7,16 @@ import org.springframework.stereotype.Service;
 
 import com.ddas.model.domain.User;
 import com.ddas.model.domain.UserRole;
-import com.ddas.model.dto.UserLoginDTO;
-import com.ddas.model.dto.UserRegistrationDTO;
+import com.ddas.model.dto.LoginRequest;
+import com.ddas.model.dto.RegisterRequest;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 @Service
 public class AuthService
 {
-    public AuthService(UserService userService, JwtService jwtService, PasswordEncoder passwordEncoder, AuthenticationManager authManager)
-    {
-        this. userService = userService;
-        this.jwtService = jwtService;
-        this.passwordEncoder = passwordEncoder;
-        this.authManager = authManager;
-    }
-
-    public String register(UserRegistrationDTO userDTO)
+    public String register(RegisterRequest userDTO)
     {
         User user = new User(userDTO.email(), passwordEncoder.encode(userDTO.password()), UserRole.USER);
         userService.save(user);
@@ -29,12 +24,12 @@ public class AuthService
         return jwtService.generateToken(user);
     }
 
-    public String login(UserLoginDTO userDTO)
+    public String login(LoginRequest userDTO)
     {
         //TODO: handle authentication exception?
-        authManager.authenticate(new UsernamePasswordAuthenticationToken(userDTO.email(), userDTO.password()));
-
         User user = userService.findByEmail(userDTO.email());
+
+        authManager.authenticate(new UsernamePasswordAuthenticationToken(userDTO.email(), userDTO.password()));
 
         return jwtService.generateToken(user);
     }

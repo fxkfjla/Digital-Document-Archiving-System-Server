@@ -14,14 +14,16 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
+@Getter
 @Entity
 @Table(name = "users")
 public class User implements UserDetails
 {
     // TODO: Implement account locking etc. mechanisms 
-
-    public User() { }
 
     public User(String email, String password, UserRole role)
     {
@@ -34,6 +36,12 @@ public class User implements UserDetails
     public Collection<? extends GrantedAuthority> getAuthorities()
     {
         return List.of(new SimpleGrantedAuthority(role.name()));
+    }
+
+    @Override
+    public String getUsername()
+    {
+        return email;
     }
 
     @Override
@@ -59,16 +67,6 @@ public class User implements UserDetails
     {
          return true; 
     }
-
-    // Getters, setters
-    public Long getId() { return id; }
-    @Override public String getUsername() { return email; }
-    @Override public String getPassword() { return password; }
-    public UserRole getRole() { return role; }
-    public void setId(Long id) { this.id = id; }
-    public void setEmail(String email) { this.email = email; }
-    public void setPassword(String password) { this.password = password; }
-    public void setRole(UserRole role) { this.role = role; }
 
     @Id 
     @GeneratedValue(strategy = GenerationType.AUTO) 
