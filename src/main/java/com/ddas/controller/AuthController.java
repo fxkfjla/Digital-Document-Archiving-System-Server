@@ -1,5 +1,6 @@
 package com.ddas.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,16 +17,14 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/api/v1/auth")
 public class AuthController
 {
-
-
-    @PostMapping("/regster")
-    public ApiResponse<String> register(RegisterRequest user)
+    @PostMapping("/register")
+    public ResponseEntity<ApiResponse<String>> register(RegisterRequest user)
     {
         return ApiResponse.success(authService.register(user));
     }
 
     @PostMapping("/login")
-    public ApiResponse<String> login(LoginRequest user)
+    public ResponseEntity<ApiResponse<String>> login(LoginRequest user)
     {
         return ApiResponse.success(authService.login(user));
     }

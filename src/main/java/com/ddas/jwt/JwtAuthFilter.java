@@ -62,7 +62,7 @@ public class JwtAuthFilter extends OncePerRequestFilter
             // TODO: find a clever way to reduce code repetition (entrypoint)
             HttpStatus status = HttpStatus.UNAUTHORIZED;
 
-            var apiError = ApiResponse.error(e, status, request);
+            var apiError = ApiResponse.apiError(e, status, request);
 
             var objMapper = new ObjectMapper();
 

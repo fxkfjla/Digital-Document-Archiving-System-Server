@@ -1,5 +1,6 @@
 package com.ddas.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,20 +18,20 @@ import lombok.AllArgsConstructor;
 public class UserController
 {
     @PostMapping("/save")
-    public ApiResponse<String> save(User user)
+    public ResponseEntity<ApiResponse<String>> save(User user)
     {
         userService.save(user);
         return ApiResponse.success("User saved!");
     }
 
     @GetMapping("/find-by-id")
-    public ApiResponse<User> findById(Long id)
+    public ResponseEntity<ApiResponse<User>> findById(Long id)
     {
         return ApiResponse.success(userService.findById(id));
     }
 
     @GetMapping("/find-by-email")
-    public ApiResponse<User> findByEmail(String email)
+    public ResponseEntity<ApiResponse<User>> findByEmail(String email)
     {
         return ApiResponse.success(userService.findByEmail(email));
     }

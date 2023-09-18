@@ -23,7 +23,7 @@ public class WebSecurityAuthEntryPoint implements AuthenticationEntryPoint
     {
         HttpStatus status = HttpStatus.UNAUTHORIZED;
 
-        var apiError = ApiResponse.error(authException, status, request);
+        var apiError = ApiResponse.apiError(authException, status, request);
 
         var objMapper = new ObjectMapper();
 
