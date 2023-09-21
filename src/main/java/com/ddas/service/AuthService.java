@@ -34,6 +34,11 @@ public class AuthService
         return jwtService.generateToken(user);
     }
 
+    public void logout(String token)
+    {
+        jwtService.blacklistToken(token);
+    }
+
     private final UserService userService; 
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;

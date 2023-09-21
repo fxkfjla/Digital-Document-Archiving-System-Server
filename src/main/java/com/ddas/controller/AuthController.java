@@ -29,5 +29,12 @@ public class AuthController
         return ApiResponse.success(authService.login(user));
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<String>> logout(String token)
+    {
+        authService.logout(token);
+        return ApiResponse.success("Token: " + token + "invalidated!");
+    }
+
     private final AuthService authService;
 }
