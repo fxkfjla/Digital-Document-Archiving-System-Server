@@ -5,6 +5,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.ddas.exception.model.EmailAlreadyTakenException;
 import com.ddas.model.domain.User;
 import com.ddas.model.domain.UserRole;
 import com.ddas.model.dto.LoginRequest;
@@ -18,7 +19,8 @@ public class AuthService
 {
     public String register(RegisterRequest userDTO)
     {
-        User user = new User(userDTO.email(), passwordEncoder.encode(userDTO.password()), UserRole.USER);
+        User user = validateRegisterRequest(userDTO);
+
         userService.save(user);
 
         return jwtService.generateToken(user);
@@ -26,7 +28,6 @@ public class AuthService
 
     public String login(LoginRequest userDTO)
     {
-        //TODO: handle authentication exception?
         User user = userService.findByEmail(userDTO.email());
 
         authManager.authenticate(new UsernamePasswordAuthenticationToken(userDTO.email(), userDTO.password()));
@@ -37,6 +38,18 @@ public class AuthService
     public void logout(String token)
     {
         jwtService.blacklistToken(token);
+    }
+
+    private User validateRegisterRequest(RegisterRequest user)
+    {
+        String email = user.email();
+
+        if(userService.existsByEmail(email))
+        {
+            throw new EmailAlreadyTakenException("Email already taken!");    
+        }
+
+        return new User(email, passwordEncoder.encode(user.password()), UserRole.USER);
     }
 
     private final UserService userService; 
