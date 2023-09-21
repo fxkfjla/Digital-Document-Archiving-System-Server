@@ -17,6 +17,8 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/api/v1/user")
 public class UserController
 {
+    // TODO: authorize admin only
+
     @PostMapping("/save")
     public ResponseEntity<ApiResponse<String>> save(User user)
     {
