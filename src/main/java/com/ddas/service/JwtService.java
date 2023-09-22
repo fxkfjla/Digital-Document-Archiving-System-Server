@@ -52,7 +52,9 @@ public class JwtService
 
     public void blacklistToken(String token)
     {
-        jwtBlacklistRepository.save(new JwtBlacklist(token));
+        final Date expirationDate = extractExpiration(token);
+
+        jwtBlacklistRepository.save(new JwtBlacklist(token, expirationDate));
     }
 
     public String extractUsername(String token)

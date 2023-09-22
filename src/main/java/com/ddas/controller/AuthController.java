@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ddas.exception.model.ApiResponse;
 import com.ddas.model.dto.LoginRequest;
 import com.ddas.model.dto.RegisterRequest;
+import com.ddas.model.dto.TokenDTO;
 import com.ddas.service.AuthService;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -20,23 +20,22 @@ import lombok.AllArgsConstructor;
 public class AuthController
 {
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<String>> register(@Valid RegisterRequest user)
+    public ResponseEntity<ApiResponse<TokenDTO>> register(@Valid RegisterRequest user)
     {
         return ApiResponse.success(authService.register(user));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<String>> login(@Valid LoginRequest user)
+    public ResponseEntity<ApiResponse<TokenDTO>> login(@Valid LoginRequest user)
     {
         return ApiResponse.success(authService.login(user));
     }
 
-    // TODO: validate token handle invalid token exception 
     @PostMapping("/logout")
-    public ResponseEntity<ApiResponse<String>> logout(@Valid @NotNull String token)
+    public ResponseEntity<ApiResponse<String>> logout(@Valid TokenDTO token)
     {
         authService.logout(token);
-        return ApiResponse.success("Token: " + token + " invalidated!");
+        return ApiResponse.success("Token: " + token.token() + " invalidated!");
     }
 
     private final AuthService authService;
