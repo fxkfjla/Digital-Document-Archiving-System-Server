@@ -1,5 +1,6 @@
 package com.ddas.exception;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -31,5 +32,11 @@ public class GlobalExceptionHandler
     public ResponseEntity<ApiResponse<Void>> handleMethodArgumentNotValid(MethodArgumentNotValidException e, HttpServletRequest req)
     {
         return ApiResponse.error(e, HttpStatus.BAD_REQUEST, req);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiResponse<Void>>handleDataIntegrityViolationException(DataIntegrityViolationException e, HttpServletRequest req)
+    {
+        return ApiResponse.error(e, HttpStatus.CONFLICT, req);
     }
 }
