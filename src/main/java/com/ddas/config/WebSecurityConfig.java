@@ -12,6 +12,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.ddas.jwt.JwtAuthFilter;
+import com.ddas.exception.FilterExceptionHandler;
 
 import lombok.AllArgsConstructor;
 
@@ -38,6 +39,7 @@ public class WebSecurityConfig
         )
         .authenticationProvider(authProvider)
         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+        .addFilterBefore(filterExceptionHandler, JwtAuthFilter.class)
         .exceptionHandling(configurer -> configurer.authenticationEntryPoint(entryPoint));
 
         return http.build();
@@ -45,5 +47,6 @@ public class WebSecurityConfig
 
     private final AuthenticationProvider authProvider;
     private final JwtAuthFilter jwtAuthFilter;
+    private final FilterExceptionHandler filterExceptionHandler;
     private final AuthenticationEntryPoint entryPoint;
 }
