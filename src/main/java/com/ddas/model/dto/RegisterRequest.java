@@ -19,6 +19,7 @@ public record RegisterRequest(
     @NotNull(message = "Password is null") 
     @NotBlank(message = "Password is required!")
     @Password(message = "Invalid password format!") 
+    // TODO: possibly change @Password to @Pattern
     String password, 
 
     @NotNull(message = "Repassword is null!") 

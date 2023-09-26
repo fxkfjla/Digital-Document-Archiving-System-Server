@@ -10,7 +10,7 @@ import com.ddas.model.domain.User;
 import com.ddas.model.domain.UserRole;
 import com.ddas.model.dto.LoginRequest;
 import com.ddas.model.dto.RegisterRequest;
-import com.ddas.model.dto.TokenDTO;
+import com.ddas.model.dto.TokenRequest;
 
 import lombok.AllArgsConstructor;
 
@@ -18,25 +18,23 @@ import lombok.AllArgsConstructor;
 @Service
 public class AuthService
 {
-    public TokenDTO register(RegisterRequest userDTO)
+    public void register(RegisterRequest userDTO)
     {
         User user = validateRegisterRequest(userDTO);
 
         userService.save(user);
-
-        return new TokenDTO(jwtService.generateToken(user));
     }
 
-    public TokenDTO login(LoginRequest userDTO)
+    public String login(LoginRequest userDTO)
     {
         User user = userService.findByEmail(userDTO.email());
 
         authManager.authenticate(new UsernamePasswordAuthenticationToken(userDTO.email(), userDTO.password()));
 
-        return new TokenDTO(jwtService.generateToken(user));
+        return jwtService.generateToken(user);
     }
 
-    public void logout(TokenDTO token)
+    public void logout(TokenRequest token)
     {
         jwtService.blacklistToken(token.token());
     }
