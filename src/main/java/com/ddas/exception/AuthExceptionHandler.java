@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.ddas.exception.model.ApiResponse;
 import com.ddas.exception.model.EmailAlreadyTakenException;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestControllerAdvice
@@ -24,5 +25,11 @@ public class AuthExceptionHandler
     public ResponseEntity<ApiResponse<Void>> handleEmailAlreadyTakenException(EmailAlreadyTakenException e, HttpServletRequest req)
     {
         return ApiResponse.error(e, HttpStatus.CONFLICT, req);
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<ApiResponse<Void>> handleExpiredJwtException(ExpiredJwtException e, HttpServletRequest req)
+    {
+        return ApiResponse.error(e, HttpStatus.UNAUTHORIZED, req);
     }
 }

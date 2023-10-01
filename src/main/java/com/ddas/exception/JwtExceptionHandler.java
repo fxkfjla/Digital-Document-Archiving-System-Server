@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.ddas.exception.model.ApiResponse;
 
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,12 +22,6 @@ public class JwtExceptionHandler
     
     @ExceptionHandler(SignatureException.class)
     public ResponseEntity<ApiResponse<Void>> handleSignatureException(SignatureException e, HttpServletRequest req)
-    {
-        return ApiResponse.error(e, HttpStatus.BAD_REQUEST, req);
-    }
-
-    @ExceptionHandler(ExpiredJwtException.class)
-    public ResponseEntity<ApiResponse<Void>> handleExpiredJwtException(ExpiredJwtException e, HttpServletRequest req)
     {
         return ApiResponse.error(e, HttpStatus.BAD_REQUEST, req);
     }
