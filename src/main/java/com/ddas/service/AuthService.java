@@ -2,6 +2,7 @@ package com.ddas.service;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +38,13 @@ public class AuthService
     public void logout(TokenRequest token)
     {
         jwtService.blacklistToken(token.token());
+    }
+
+    public User getCurrentUser()
+    {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName(); 
+
+        return userService.findByEmail(email); 
     }
 
     private User validateRegisterRequest(RegisterRequest user)
