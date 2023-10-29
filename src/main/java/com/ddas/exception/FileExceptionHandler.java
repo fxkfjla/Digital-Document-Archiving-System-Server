@@ -7,7 +7,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import com.ddas.exception.model.ApiResponse;
-import com.ddas.exception.model.FileException;
+import com.ddas.exception.model.FileNotFoundException;
+import com.ddas.exception.model.FileUploadException;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -20,9 +21,15 @@ public class FileExceptionHandler
         return ApiResponse.error(e, HttpStatus.BAD_REQUEST, req);
     }
 
-    @ExceptionHandler(FileException.class)
-    public ResponseEntity<ApiResponse<Void>> handleFileException(FileException e, HttpServletRequest req)
+    @ExceptionHandler(FileUploadException.class)
+    public ResponseEntity<ApiResponse<Void>> handleFileUploadException(FileUploadException e, HttpServletRequest req)
     {
         return ApiResponse.error(e, HttpStatus.BAD_REQUEST, req);
+    }
+
+    @ExceptionHandler(FileNotFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleFileNotFoundException(FileNotFoundException e, HttpServletRequest req)
+    {
+        return ApiResponse.error(e, HttpStatus.NOT_FOUND, req);
     }
 }
