@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -38,5 +39,17 @@ public class GlobalExceptionHandler
     public ResponseEntity<ApiResponse<Void>>handleDataIntegrityViolationException(DataIntegrityViolationException e, HttpServletRequest req)
     {
         return ApiResponse.error(e, HttpStatus.CONFLICT, req);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse<Void>>handleIllegalArgumentException(IllegalArgumentException e, HttpServletRequest req)
+    {
+        return ApiResponse.error(e, HttpStatus.BAD_REQUEST, req);
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ApiResponse<Void>>handleMissingServletRequestParameterException(MissingServletRequestParameterException e, HttpServletRequest req)
+    {
+        return ApiResponse.error(e, HttpStatus.BAD_REQUEST, req);
     }
 }
