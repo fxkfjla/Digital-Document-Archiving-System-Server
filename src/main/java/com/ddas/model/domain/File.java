@@ -1,5 +1,8 @@
 package com.ddas.model.domain;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,12 +19,14 @@ import lombok.NoArgsConstructor;
 @Entity
 public class File
 {
-    public File(User user, String name, String description, byte[] data)
+    public File(User user, String name, String description, byte[] data, Long size)
     {
         this.user = user;
         this.name = name;
         this.description = description;
         this.data = data;
+        this.size = size;
+        this.lastModified = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME);
     }
 
     @Id 
@@ -30,6 +35,8 @@ public class File
     @Column(nullable = false)
     private String name;
     private String description;
+    private Long size;
+    private String lastModified;
     @Lob
     @Column(columnDefinition = "LONGBLOB")
     private byte[] data;

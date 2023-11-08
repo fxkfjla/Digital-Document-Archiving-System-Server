@@ -11,4 +11,5 @@ import com.ddas.model.domain.File;
 public interface FileRepository extends CrudRepository<File, Long>
 {
     List<File> findAllByUserId(long userId);    
+    List<File> findAllByUserEmail(String userEmail);
 }

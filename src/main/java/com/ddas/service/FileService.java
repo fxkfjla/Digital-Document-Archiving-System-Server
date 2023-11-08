@@ -18,7 +18,7 @@ import lombok.AllArgsConstructor;
 @Service
 public class FileService
 {
-    public void upload(MultipartFile file)
+    public void upload(MultipartFile file, String name)
     {
         if(file == null || file.isEmpty())
         {
@@ -29,7 +29,7 @@ public class FileService
         {
             User user = authService.getCurrentUser(); 
 
-            File fileToStore = new File(user, file.getName(), "", file.getBytes());
+            File fileToStore = new File(user, name, "", file.getBytes(), file.getSize());
 
             fileRepository.save(fileToStore);
         }
@@ -48,6 +48,11 @@ public class FileService
     public List<File> findAllByUserId(long userId)
     {
         return fileRepository.findAllByUserId(userId);
+    }
+
+    public List<File> findAllByUserEmail(String userEmail)
+    {
+        return fileRepository.findAllByUserEmail(userEmail);
     }
 
     private final AuthService authService;

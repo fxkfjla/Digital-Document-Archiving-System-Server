@@ -25,28 +25,20 @@ import lombok.AllArgsConstructor;
 public class FileController
 {
     @PostMapping("/upload")
-    public ResponseEntity<ApiResponse<String>> upload(MultipartFile file)
+    public ResponseEntity<ApiResponse<String>> upload(MultipartFile file, @RequestParam String name)
     {
-        // TODO: file name has to be "file" in order to file != null
+        fileService.upload(file, name);
 
-        fileService.upload(file);
         return ApiResponse.success("File uploaded successfully!");
     }
 
-    @GetMapping(value = "/download", produces = MediaType.APPLICATION_PDF_VALUE)
-    public ResponseEntity<byte[]> download(@RequestParam long id, @RequestParam String name)
+    @GetMapping(value = "/download")
+    public ResponseEntity<byte[]> download(@RequestParam long id)
     {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
-        // headers.setContentDispositionFormData("attachment", name);
 
         return new ResponseEntity<>(fileService.findById(id).getData(), headers, HttpStatus.OK);
-    }
-
-    @GetMapping("/display")
-    public ResponseEntity<ApiResponse<byte[]>> display(@RequestParam long id)
-    {
-        return ApiResponse.success(fileService.findById(id).getData());
     }
 
     @GetMapping
@@ -56,9 +48,9 @@ public class FileController
     }
 
     @GetMapping("/all/user")
-    public ResponseEntity<ApiResponse<List<File>>> findAllByUserId(@RequestParam long userId)
+    public ResponseEntity<ApiResponse<List<File>>> findAllByUserEmail(@RequestParam String userEmail)
     {
-        return ApiResponse.success(fileService.findAllByUserId(userId));
+        return ApiResponse.success(fileService.findAllByUserEmail(userEmail));
     }
 
     private final FileService fileService;
