@@ -2,6 +2,7 @@ package com.ddas.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,21 +21,21 @@ import lombok.AllArgsConstructor;
 public class AuthController
 {
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<String>> register(@Valid RegisterRequest user)
+    public ResponseEntity<ApiResponse<String>> register(@Valid @RequestBody RegisterRequest user)
     {
         authService.register(user);
         return ApiResponse.success("User registered successfully!");
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<String>> login(@Valid LoginRequest user)
+    public ResponseEntity<ApiResponse<String>> login(@Valid @RequestBody LoginRequest user)
     {
         return ApiResponse.success(authService.login(user));
     }
 
     // Requestheader
     @PostMapping("/logout")
-    public ResponseEntity<ApiResponse<String>> logout(@Valid TokenRequest token)
+    public ResponseEntity<ApiResponse<String>> logout(@Valid @RequestBody TokenRequest token)
     {
         authService.logout(token);
         return ApiResponse.success("Token: " + token.token() + " invalidated!");
