@@ -10,6 +10,6 @@ import com.ddas.model.domain.User;
 @Repository
 public interface UserRepository extends CrudRepository<User, Long>
 {
-    public Optional<User> findByEmail(String email);
-    public boolean existsByEmail(String email);
+    Optional<User> findByEmail(String email);
+    boolean existsByEmail(String email);
 }
