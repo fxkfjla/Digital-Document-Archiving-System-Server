@@ -9,12 +9,17 @@ import java.util.function.Function;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.ddas.model.domain.JwtBlacklist;
+import com.ddas.repository.JwtBlacklistRepository;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 @Service
 public class JwtService
 {
@@ -29,7 +34,7 @@ public class JwtService
         .setClaims(extraClaims)
         .setSubject(userDetails.getUsername())
         .setIssuedAt(new Date(System.currentTimeMillis()))
-        .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+        .setExpiration(new Date(System.currentTimeMillis() + tokenExpiration))
         .signWith(getSigningKey(), SignatureAlgorithm.HS256)
         .compact();
     }
@@ -37,7 +42,19 @@ public class JwtService
     public boolean tokenIsValid(String token, UserDetails userDetails)
     {
         final String username = extractUsername(token);
-        return username.equals(userDetails.getUsername()) && !tokenIsExpired(token);
+        return username.equals(userDetails.getUsername()) && !tokenIsExpired(token) && !tokenIsBlacklisted(token);
+    }
+
+    public boolean tokenIsBlacklisted(String token)
+    {
+        return jwtBlacklistRepository.existsByToken(token);
+    }
+
+    public void blacklistToken(String token)
+    {
+        final Date expirationDate = extractExpiration(token);
+
+        jwtBlacklistRepository.save(new JwtBlacklist(token, expirationDate));
     }
 
     public String extractUsername(String token)
@@ -78,4 +95,7 @@ public class JwtService
 
     // Possibly move to application.properties
     private final String SECRET_KEY = "4c63e2fd3a1fbc442a2a6646e1c2df6e52449e4c464ea7f7e3e2a6e8e471b289";
+    private final long tokenExpiration = 1000 * 60 * 24;
+
+    private final JwtBlacklistRepository jwtBlacklistRepository;
 }

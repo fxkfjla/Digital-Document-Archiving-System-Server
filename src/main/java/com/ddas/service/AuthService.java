@@ -2,13 +2,16 @@ package com.ddas.service;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.ddas.exception.model.EmailAlreadyTakenException;
 import com.ddas.model.domain.User;
 import com.ddas.model.domain.UserRole;
 import com.ddas.model.dto.LoginRequest;
 import com.ddas.model.dto.RegisterRequest;
+import com.ddas.model.dto.TokenRequest;
 
 import lombok.AllArgsConstructor;
 
@@ -16,22 +19,44 @@ import lombok.AllArgsConstructor;
 @Service
 public class AuthService
 {
-    public String register(RegisterRequest userDTO)
+    public void register(RegisterRequest userDTO)
     {
-        User user = new User(userDTO.email(), passwordEncoder.encode(userDTO.password()), UserRole.USER);
-        userService.save(user);
+        User user = validateRegisterRequest(userDTO);
 
-        return jwtService.generateToken(user);
+        userService.save(user);
     }
 
     public String login(LoginRequest userDTO)
     {
-        //TODO: handle authentication exception?
         User user = userService.findByEmail(userDTO.email());
 
         authManager.authenticate(new UsernamePasswordAuthenticationToken(userDTO.email(), userDTO.password()));
 
         return jwtService.generateToken(user);
+    }
+
+    public void logout(TokenRequest token)
+    {
+        jwtService.blacklistToken(token.token());
+    }
+
+    public User getCurrentUser()
+    {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName(); 
+
+        return userService.findByEmail(email); 
+    }
+
+    private User validateRegisterRequest(RegisterRequest user)
+    {
+        String email = user.email();
+
+        if(userService.existsByEmail(email))
+        {
+            throw new EmailAlreadyTakenException("Email already taken!");    
+        }
+
+        return new User(email, passwordEncoder.encode(user.password()), UserRole.USER);
     }
 
     private final UserService userService; 

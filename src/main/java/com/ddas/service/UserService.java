@@ -29,6 +29,11 @@ public class UserService
         .orElseThrow(() -> new UserNotFoundException("User with email: " + email + " not found!"));
     }
 
+    public boolean existsByEmail(String email)
+    {
+        return userRepository.existsByEmail(email);
+    }
+
     public void deleteUser(User user)
     {
         userRepository.delete(user);

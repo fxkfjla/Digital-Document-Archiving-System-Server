@@ -2,6 +2,7 @@ package com.ddas.exception.model;
 
 import java.time.LocalDateTime;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -14,9 +15,19 @@ import lombok.Getter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class ApiResponse<T>
 {
+    public static <T> ResponseEntity<ApiResponse<T>> success(T data, HttpHeaders headers)
+    {
+        return new ResponseEntity<ApiResponse<T>>(new ApiSuccess<T>(data), headers, HttpStatus.OK);
+    }
+
     public static <T> ResponseEntity<ApiResponse<T>> success(T data)
     {
         return new ResponseEntity<ApiResponse<T>>(new ApiSuccess<T>(data), HttpStatus.OK);
+    }
+
+    public static <T> ResponseEntity<ApiResponse<T>> success(HttpHeaders headers)
+    {
+        return new ResponseEntity<ApiResponse<T>>(new ApiSuccess<T>(null), headers, HttpStatus.OK);
     }
 
     public static ResponseEntity<ApiResponse<Void>> success()
