@@ -37,14 +37,9 @@ public class FileController
     {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.set("Content-Disposition", "attachment; filename=filename.pdf");
 
         return new ResponseEntity<>(fileService.findById(id).getData(), headers, HttpStatus.OK);
-    }
-
-    @GetMapping
-    public ResponseEntity<ApiResponse<File>> findById(@RequestParam long id)
-    {
-        return ApiResponse.success(fileService.findById(id));
     }
 
     @GetMapping("/all/user")

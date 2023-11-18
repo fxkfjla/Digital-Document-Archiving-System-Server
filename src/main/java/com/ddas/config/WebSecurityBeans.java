@@ -12,7 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.ddas.service.UserService;
+import com.ddas.exception.model.UserNotAuthenticatedException;
+import com.ddas.repository.UserRepository;
 
 import lombok.AllArgsConstructor;
 
@@ -45,7 +46,7 @@ public class WebSecurityBeans
     @Bean
     public UserDetailsService userDetailsService()
     {
-        return username -> userService.findByEmail(username);
+        return username -> userRepository.findByEmail(username).orElseThrow(() -> new UserNotAuthenticatedException("Authentication failed!"));
     }
 
 	@Bean
@@ -57,6 +58,6 @@ public class WebSecurityBeans
 			}
 		};
 	}
-    
-    private final UserService userService;
+
+    private final UserRepository userRepository;
 }

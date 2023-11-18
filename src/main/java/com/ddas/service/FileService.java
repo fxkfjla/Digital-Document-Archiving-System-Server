@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ddas.exception.model.FileUploadException;
+import com.ddas.exception.model.FileAccessDeniedException;
 import com.ddas.exception.model.FileNotFoundException;
 import com.ddas.model.domain.File;
 import com.ddas.model.domain.User;
@@ -41,13 +42,12 @@ public class FileService
 
     public File findById(long id)
     {
-        return fileRepository.findById(id)
-        .orElseThrow(() -> new FileNotFoundException("File with id: " + id + " not found!"));
-    }
+        File file = fileRepository.findById(id).orElseThrow(() -> new FileNotFoundException("File with id: " + id + " not found!"));
 
-    public List<File> findAllByUserId(long userId)
-    {
-        return fileRepository.findAllByUserId(userId);
+        if(authService.getCurrentUser().getId() != file.getUser().getId())
+            throw new FileAccessDeniedException("Access to file denied!");
+
+        return file;
     }
 
     public List<File> findAllByUserEmail(String userEmail)

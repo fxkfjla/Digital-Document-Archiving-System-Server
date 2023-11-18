@@ -7,6 +7,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.ddas.exception.model.EmailAlreadyTakenException;
+import com.ddas.exception.model.UserNotAuthenticatedException;
+import com.ddas.exception.model.UserNotFoundException;
 import com.ddas.model.domain.User;
 import com.ddas.model.domain.UserRole;
 import com.ddas.model.dto.LoginRequest;
@@ -44,7 +46,19 @@ public class AuthService
     {
         String email = SecurityContextHolder.getContext().getAuthentication().getName(); 
 
-        return userService.findByEmail(email); 
+        return findAuthenticatedUserByEmail(email); 
+    }
+
+    public User findAuthenticatedUserByEmail(String email)
+    {
+        try
+        {
+            return userService.findByEmail(email);
+        }
+        catch(UserNotFoundException e)
+        {
+            throw new UserNotAuthenticatedException("Authentication failed!");
+        }
     }
 
     private User validateRegisterRequest(RegisterRequest user)

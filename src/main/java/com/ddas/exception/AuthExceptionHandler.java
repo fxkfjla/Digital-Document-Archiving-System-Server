@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.ddas.exception.model.ApiResponse;
 import com.ddas.exception.model.EmailAlreadyTakenException;
+import com.ddas.exception.model.UserNotAuthenticatedException;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,6 +18,12 @@ public class AuthExceptionHandler
 {
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ApiResponse<Void>> handleAuthenticationException(AuthenticationException e, HttpServletRequest req)
+    {
+        return ApiResponse.error(e, HttpStatus.UNAUTHORIZED, req);
+    }
+
+    @ExceptionHandler(UserNotAuthenticatedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAuthenticationFailedException(UserNotAuthenticatedException e, HttpServletRequest req)
     {
         return ApiResponse.error(e, HttpStatus.UNAUTHORIZED, req);
     }

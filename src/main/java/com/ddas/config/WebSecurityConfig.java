@@ -24,18 +24,17 @@ public class WebSecurityConfig
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception
     {
-        http
-        .csrf(AbstractHttpConfigurer::disable)
-        .authorizeHttpRequests(auth ->
-            auth 
-            .requestMatchers("/api/v1/auth/register", "/api/v1/auth/login")
-            .permitAll()
-            .anyRequest()
-            .authenticated()
-        )
+        http.csrf().disable().authorizeRequests().requestMatchers("/**").permitAll().anyRequest().authenticated().and()
+        // http.csrf(AbstractHttpConfigurer::disable)
+        // .authorizeHttpRequests(auth ->
+        //     auth 
+        //     .requestMatchers("/api/v1/auth/register", "/api/v1/auth/login")
+        //     .permitAll()
+        //     .anyRequest()
+        //     .authenticated()
+        // )
         .sessionManagement(session ->
-            session
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         )
         .authenticationProvider(authProvider)
         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
