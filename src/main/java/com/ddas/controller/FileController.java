@@ -2,6 +2,7 @@ package com.ddas.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,14 +26,20 @@ import lombok.AllArgsConstructor;
 public class FileController
 {
     @PostMapping("/upload")
-    public ResponseEntity<ApiResponse<String>> upload(MultipartFile file, @RequestParam String name)
+    public ResponseEntity<ApiResponse<String>> upload
+    (
+        MultipartFile file, 
+        @RequestParam String name,
+        @RequestParam(defaultValue = "") String description,
+        @RequestParam(defaultValue = "") List<String> tags
+    )
     {
-        fileService.upload(file, name);
+        fileService.upload(file, name, description, tags);
 
         return ApiResponse.success("File uploaded successfully!");
     }
 
-    @GetMapping(value = "/download")
+    @GetMapping("/download")
     public ResponseEntity<byte[]> download(@RequestParam long id)
     {
         HttpHeaders headers = new HttpHeaders();
@@ -42,10 +49,35 @@ public class FileController
         return new ResponseEntity<>(fileService.findById(id).getData(), headers, HttpStatus.OK);
     }
 
-    @GetMapping("/all/user")
-    public ResponseEntity<ApiResponse<List<File>>> findAllByUserEmail(@RequestParam String userEmail)
+    @GetMapping("/delete")
+    public ResponseEntity<ApiResponse<String>> delete(@RequestParam long id)
     {
-        return ApiResponse.success(fileService.findAllByUserEmail(userEmail));
+        fileService.delete(id);
+
+        return ApiResponse.success("File deleted successfully!");
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<ApiResponse<Page<File>>> findAllForUser
+    (
+        @RequestParam(defaultValue = "lastModified") String sortBy,
+        @RequestParam(defaultValue = "asc") String sortDirection,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "12") int size
+    ) {
+        return ApiResponse.success(fileService.findAllForUser(sortBy, sortDirection, page, size));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<Page<File>>> search
+    (
+        @RequestParam String name,
+        @RequestParam(defaultValue = "lastModified") String sortBy,
+        @RequestParam(defaultValue = "asc") String sortDirection,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "12") int size
+    ) {
+        return ApiResponse.success(fileService.search(name, sortBy, sortDirection, page, size));
     }
 
     private final FileService fileService;
