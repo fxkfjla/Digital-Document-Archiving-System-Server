@@ -33,7 +33,6 @@ public class AuthController
         return ApiResponse.success(authService.login(user));
     }
 
-    // Requestheader
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<String>> logout(@Valid @RequestBody TokenRequest token)
     {

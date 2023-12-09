@@ -28,6 +28,32 @@ import lombok.AllArgsConstructor;
 @Service
 public class FileService
 {
+    public void editFile(Long id, String name, String description, List<String> tags)
+    {
+        tags.replaceAll(tag -> WordUtils.capitalizeFully(tag.toLowerCase()));
+
+        List<Tag> existingTags = tagService.findAllByNameIn(tags);
+
+        Set<Tag> fileTags = tags.stream().map(tagName -> 
+            existingTags.stream().filter(tag -> tag.getName().equals(tagName)).findAny().orElseGet(() -> {
+                Tag newTag = new Tag(tagName);
+                tagService.save(newTag);
+                return newTag;
+            })
+        ).collect(Collectors.toSet());
+
+        File existingFile = findById(id);
+
+        existingFile.getTags().forEach(tag -> { if (!fileTags.contains(tag)) tag.getFiles().remove(existingFile); });
+        fileTags.forEach(tag -> tag.getFiles().add(existingFile));
+
+        existingFile.setName(name);
+        existingFile.setDescription(description);
+        existingFile.setTags(fileTags);
+
+        fileRepository.save(existingFile);
+    }
+
     @Transactional
     public void upload(MultipartFile file, String name, String description, List<String> tags)
     {
@@ -43,9 +69,9 @@ public class FileService
             tags.replaceAll(tag -> WordUtils.capitalizeFully(tag.toLowerCase()));
             List<Tag> existingTags = tagService.findAllByNameIn(tags);
 
-            Set<Tag> fileTags = tags.stream().filter(tagName -> 
-                existingTags.stream().noneMatch(tag -> tag.getName().equals(tagName))
-            ).map(Tag::new).collect(Collectors.toSet());
+            Set<Tag> fileTags = tags.stream().map(tagName -> 
+                existingTags.stream().filter(tag -> tag.getName().equals(tagName)).findAny().orElseGet(() -> new Tag(tagName))
+            ).collect(Collectors.toSet());
 
             File fileToStore = new File(user, name, description, file.getBytes(), file.getSize(), fileTags);
 
@@ -94,7 +120,7 @@ public class FileService
 
         User user = authService.getCurrentUser();
 
-        return fileRepository.findByUserAndNameContaining(user, name, pageable);
+        return fileRepository.findByUserAndSearchString(user, name, pageable);
     }
 
     private final AuthService authService;

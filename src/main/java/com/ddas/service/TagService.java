@@ -1,6 +1,7 @@
 package com.ddas.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,11 @@ public class TagService
     public void save(Tag tag)
     {
         tagRepository.save(tag);
+    }
+
+    public Optional<Tag> findByName(String tag)
+    {
+        return tagRepository.findByName(tag);
     }
 
     public List<Tag> findAllByNameIn(List<String> tags)
