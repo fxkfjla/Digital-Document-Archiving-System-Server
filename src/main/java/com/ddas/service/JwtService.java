@@ -57,6 +57,13 @@ public class JwtService
         jwtBlacklistRepository.save(new JwtBlacklist(token, expirationDate));
     }
 
+    public void deleteExpiredTokens()
+    {
+        Date expirationDate = new Date(System.currentTimeMillis() - tokenExpiration);
+
+        jwtBlacklistRepository.deleteByExpirationDateBefore(expirationDate);
+    }
+
     public String extractUsername(String token)
     {
         return extractClaim(token, Claims::getSubject);
@@ -95,7 +102,7 @@ public class JwtService
 
     // Possibly move to application.properties
     private final String SECRET_KEY = "4c63e2fd3a1fbc442a2a6646e1c2df6e52449e4c464ea7f7e3e2a6e8e471b289";
-    private final long tokenExpiration = 1000 * 60 * 24;
+    private final long tokenExpiration = 1000 * 60 * 60;
 
     private final JwtBlacklistRepository jwtBlacklistRepository;
 }

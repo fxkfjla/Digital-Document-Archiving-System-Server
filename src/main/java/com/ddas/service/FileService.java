@@ -31,6 +31,8 @@ public class FileService
     public void editFile(Long id, String name, String description, List<String> tags)
     {
         tags.replaceAll(tag -> WordUtils.capitalizeFully(tag.toLowerCase()));
+        tags.replaceAll(tag -> WordUtils.capitalizeFully(tag.toLowerCase()));
+        tags.replaceAll(tag -> tag.toUpperCase());
 
         List<Tag> existingTags = tagService.findAllByNameIn(tags);
 
@@ -42,7 +44,11 @@ public class FileService
             })
         ).collect(Collectors.toSet());
 
+        User user = authService.getCurrentUser();
         File existingFile = findById(id);
+
+        if(user.getId() != existingFile.getUser().getId())
+            throw new FileAccessDeniedException("Access to file denied!");
 
         existingFile.getTags().forEach(tag -> { if (!fileTags.contains(tag)) tag.getFiles().remove(existingFile); });
         fileTags.forEach(tag -> tag.getFiles().add(existingFile));
@@ -66,7 +72,7 @@ public class FileService
         {
             User user = authService.getCurrentUser(); 
 
-            tags.replaceAll(tag -> WordUtils.capitalizeFully(tag.toLowerCase()));
+            tags.replaceAll(tag -> tag.toUpperCase());
             List<Tag> existingTags = tagService.findAllByNameIn(tags);
 
             Set<Tag> fileTags = tags.stream().map(tagName -> 
@@ -98,19 +104,14 @@ public class FileService
         return file;
     }
 
-    public List<File> findAllForUser()
-    {
-        String email = authService.getCurrentUser().getEmail();
-
-        return fileRepository.findAllByUserEmail(email);
-    }
-
     public Page<File> findAllForUser(String sortBy, String sortDirection, int page, int size)
     {
         Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        return fileRepository.findAll(pageable);
+        String email = authService.getCurrentUser().getEmail();
+
+        return fileRepository.findAllByUserEmail(email, pageable);
     }
 
     public Page<File> search(String name, String sortBy, String sortDirection, int page, int size)

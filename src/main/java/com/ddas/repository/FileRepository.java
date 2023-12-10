@@ -1,7 +1,5 @@
 package com.ddas.repository;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -15,9 +13,7 @@ import com.ddas.model.domain.User;
 @Repository
 public interface FileRepository extends CrudRepository<File, Long>
 {
-    Page<File> findAll(Pageable pageable);
-    List<File> findAllByUserId(long userId);    
-    List<File> findAllByUserEmail(String userEmail);
+    Page<File> findAllByUserEmail(String userEmail, Pageable pageable);
     Page<File> findByUserAndNameContaining(User user, String name, Pageable pageable);
     @Query("SELECT DISTINCT f FROM File f " +
        "LEFT JOIN f.tags t " +
