@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.text.WordUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,8 +29,6 @@ public class FileService
 {
     public void editFile(Long id, String name, String description, List<String> tags)
     {
-        tags.replaceAll(tag -> WordUtils.capitalizeFully(tag.toLowerCase()));
-        tags.replaceAll(tag -> WordUtils.capitalizeFully(tag.toLowerCase()));
         tags.replaceAll(tag -> tag.toUpperCase());
 
         List<Tag> existingTags = tagService.findAllByNameIn(tags);
