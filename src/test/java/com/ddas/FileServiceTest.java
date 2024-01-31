@@ -34,7 +34,7 @@ import com.ddas.service.TagService;
 class FileServiceTest {
 
     @Test
-    void uploadSuccessTest()
+    void uploadTest()
     {
         MultipartFile mockFile = mock(MultipartFile.class);
         when(mockFile.isEmpty()).thenReturn(false);
@@ -52,7 +52,7 @@ class FileServiceTest {
     }
 
     @Test
-    void testUploadFileEmpty() {
+    void uploadEmptyFileTest() {
         MultipartFile mockFile = mock(MultipartFile.class);
         when(mockFile.isEmpty()).thenReturn(true);
 
@@ -69,7 +69,7 @@ class FileServiceTest {
     }
 
     @Test
-    void testFindAllForUser() {
+    void findAllForUserTest() {
         String email = "user@test.com";
         User mockUser = mock(User.class);
         when(mockUser.getEmail()).thenReturn(email);
@@ -86,7 +86,7 @@ class FileServiceTest {
     }
 
     @Test
-    void testSearch() {
+    void searchTest() {
         User mockUser = mock(User.class);
         when(authService.getCurrentUser()).thenReturn(mockUser);
 
